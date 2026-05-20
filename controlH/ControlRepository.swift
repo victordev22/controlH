@@ -17,7 +17,7 @@ class ControlRepository {
     
     // Simula tus llamadas de endpoint tipadas (Equivalente a ControlService/ApiService de Retrofit)
     func listaHoras() async -> Result<[Horas], Error> {
-        guard let url = URL(string: Constants.baseURL + Constants.pathWines) else {
+        guard let url = URL(string: Constants.baseURL + Constants.pathHoras) else {
             return .failure(URLError(.badURL))
         }
         
