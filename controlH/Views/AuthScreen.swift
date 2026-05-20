@@ -78,7 +78,7 @@ struct AuthScreen: View {
                         Text(isLoginScreen ? "Sign In" : "Sign Up")
                             .font(.headline)
                             .foregroundColor(.white)
-                            .frame(maxWidth: .max)
+                            .frame(maxWidth: .infinity)
                             .frame(height: 48)
                             .background(AppTheme.primary)
                             .cornerRadius(8)
