@@ -88,8 +88,8 @@ struct ListUser: View {
         // Mock de carga asíncrona de usuarios
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             self.userList = [
-                UserFull(id: 1, nickname: "Admin01", email: "admin@control.com", roles: [UserRole(erole: "ROLE_ADMIN")], on_control: "08:00", of_control: "17:00"),
-                UserFull(id: 2, nickname: "UserDev", email: "dev@control.com", roles: [UserRole(erole: "ROLE_USER")], on_control: "09:00", of_control: "18:00")
+                UserFull(id: 1, nickname: "Admin01", email: "admin@control.com", password: nil, onControl: "08:00", ofControl: "17:00", roles: [Role(erole: "ROLE_ADMIN")]),
+                UserFull(id: 2, nickname: "UserDev", email: "dev@control.com", password: nil, onControl: "09:00", ofControl: "18:00", roles: [Role(erole: "ROLE_USER")])
             ]
             self.isLoading = false
         }
@@ -105,7 +105,7 @@ struct ListUser: View {
         // Encontrar índice y actualizar los datos locales reflejando los cambios de red con éxito
         if let index = userList.firstIndex(where: { $0.id == user.id }) {
             var updated = user
-            updated.roles = [UserRole(erole: roleId == 1 ? "ROLE_ADMIN" : "ROLE_USER")]
+            updated.roles = [Role(erole: roleId == 1 ? "ROLE_ADMIN" : "ROLE_USER")]
             userList[index] = updated
         }
     }
@@ -125,10 +125,10 @@ struct CardItemUserView: View {
                     .foregroundColor(AppTheme.primary)
                 Text("Email: \(user.email)")
                     .font(.subheadline)
-                Text("Rol: \(user.roles.any { $0.erole == "ROLE_ADMIN" } ? "ADMIN" : "USER")")
+                Text("Rol: \(user.roles.contains { $0.erole == "ROLE_ADMIN" } ? "ADMIN" : "USER")")
                     .font(.caption)
                     .bold()
-                Text("ON: \(user.on_control) | OFF: \(user.of_control)")
+                Text("ON: \(user.onControl) | OFF: \(user.ofControl)")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }

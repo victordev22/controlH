@@ -18,7 +18,7 @@ class AuthInterceptor {
         // Obtenemos el token almacenado de tu llavero seguro o gestor
         if let token = TokenManager.getToken() {
             // Equivale exactamente a requestBuilder.header("Authorization", "Bearer $it")
-            modifiedRequest.setValue("Bearer (token)", forHTTPHeaderField: "Authorization")
+            modifiedRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
 
         return modifiedRequest

@@ -32,18 +32,17 @@ struct User: Codable {
 }
 
 struct UserFull: Codable, Identifiable {
-    let id: Int // Al tener una propiedad 'id', podemos agregar 'Identifiable' para usarlo fácil en listas de SwiftUI
-    let nickname: String
-    let email: String
-    let password: String
+    let id: Int
+    var nickname: String
+    var email: String
+    let password: String?
     let onControl: String
     let ofControl: String
+    var roles: [Role]
 
-    // Mapeamos los nombres con guion bajo del JSON (on_control) a camelCase de Swift (onControl)
     enum CodingKeys: String, CodingKey {
-        case id, nickname, email, password
+        case id, nickname, email, password, roles
         case onControl = "on_control"
         case ofControl = "of_control"
-        case roles
     }
 }

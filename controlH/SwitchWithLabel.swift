@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SwitchWithLabel: View {
     let title: String
-    let initialSwitchState: Boolean
+    let initialSwitchState: Bool
     let isLoading: Bool
     let isEnabled: Bool
     

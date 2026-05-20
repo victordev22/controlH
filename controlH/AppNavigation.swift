@@ -4,7 +4,7 @@
 //
 //  Created by user297436 on 5/20/26.
 //
-
+import SwiftUI
 
 class NavigationRouter: ObservableObject {
     // Esta lista guarda el historial de pantallas abiertas
@@ -23,5 +23,9 @@ class NavigationRouter: ObservableObject {
 
     func popToRoot() {
         path.removeAll()
+    }
+
+    func pushAndReplaceRoot(with screen: AppScreen) {
+        path = [screen]
     }
 }

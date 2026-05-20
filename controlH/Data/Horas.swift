@@ -10,8 +10,8 @@ import Foundation
 struct Horas: Codable, Identifiable {
     let id: Int
     let user: String
-    let horaEncendido: Date
-    let horaApagado: Date
+    let horaEncendido: Date?
+    let horaApagado: Date?
     let minutosInactivo: Int
     let listaApps: String?
 

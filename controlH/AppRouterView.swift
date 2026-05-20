@@ -44,7 +44,7 @@ struct AppRouterView: View {
                     Text("Auth View")
                 case .detail(let id):
                     // Pasamos el ID directamente como un parámetro nativo de inicialización
-                    Text("Detail View de la PC con ID: (id)")
+                    Text("Detail View de la PC con ID: \(id)")
                 }
             }
         }

@@ -36,10 +36,10 @@ struct ListScreen: View {
             return baseList
         case .poweredOn:
             // Filtra los registros que no tienen hora de apagado
-            return baseList.filter { $0.horaapagado == nil }
+            return baseList.filter { $0.horaApagado == nil }
         case .cameLate:
             return baseList.filter { hora in
-                guard let encendido = hora.horaencendido else { return false }
+                guard let encendido = hora.horaEncendido else { return false }
                 let calendar = Calendar.current
                 
                 // Definir hora límite a las 09:00 del mismo día
@@ -53,7 +53,7 @@ struct ListScreen: View {
             }
         case .menosTime:
             return horasList.filter { hora in
-                guard let encendido = hora.horaencendido, let apagado = hora.hora_apagado else { return false }
+                guard let encendido = hora.horaEncendido, let apagado = hora.horaApagado else { return false }
                 
                 var diff = apagado.timeIntervalSince(encendido)
                 if apagado < encendido {
@@ -176,9 +176,9 @@ struct ListScreen: View {
             
             // Datos quemados de prueba estructurados idénticos a tu backend
             let mockData = [
-                Horas(id: 1, user: "PC_ALBERTO", hora_encendido: Date().addingTimeInterval(-36000), hora_apagado: Date(), minutosInactivo: 12),
-                Horas(id: 2, user: "PC_MARIA", hora_encendido: Date().addingTimeInterval(-14000), hora_apagado: nil, minutosInactivo: 0),
-                Horas(id: 3, user: "PC_CARLOS", hora_encendido: Date(), hora_apagado: nil, minutosInactivo: 45)
+                Horas(id: 1, user: "PC_ALBERTO", horaEncendido: Date().addingTimeInterval(-36000), horaApagado: Date(), minutosInactivo: 12, listaApps: nil),
+                Horas(id: 2, user: "PC_MARIA", horaEncendido: Date().addingTimeInterval(-14000), horaApagado: nil, minutosInactivo: 0, listaApps: nil),
+                Horas(id: 3, user: "PC_CARLOS", horaEncendido: Date(), horaApagado: nil, minutosInactivo: 45, listaApps: nil)
             ]
             
             horasList = mockData
@@ -193,17 +193,17 @@ struct ListScreen: View {
 
 // MARK: - COMPONENTE CARD (CardItemComposable)
 struct CardItemHorasView: View {
-    let hora: \n
+    let hora: Horas
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(hora.user)
                 .font(.title3)
                 .fontWeight(.bold)
                 .foregroundColor(AppTheme.primary)
-            
+
             Group {
-                Text("Encendido: ") + Text(hora.hora_encendido?.formatted() ?? "N/A").foregroundColor(.primary)
-                Text("Apagado: ") + Text(hora.hora_apagado?.formatted() ?? "En curso...").foregroundColor(.primary)
+                Text("Encendido: ") + Text(hora.horaEncendido?.formatted() ?? "N/A").foregroundColor(.primary)
+                Text("Apagado: ") + Text(hora.horaApagado?.formatted() ?? "En curso...").foregroundColor(.primary)
                 Text("Inactividad: ") + Text("\(hora.minutosInactivo) min").foregroundColor(.primary)
             }
             .font(.footnote)

@@ -8,7 +8,7 @@
 import Foundation
 import Security
 
-object TokenManager {
+class TokenManager {
     private static let jwtTokenKey = "com.controlh.jwttoken"
 
     // En iOS no hace falta inicializar un Context como en Android.

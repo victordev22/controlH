@@ -18,7 +18,7 @@ struct LoginView: View {
 
                 Button(action: {
                     // Acción del botón: Navega al Home enrutado de forma segura
-                    router.push(.home)
+                    router.navigate(to: .home)
                 }) {
                     Text("Navega")
                         .font(.headline)

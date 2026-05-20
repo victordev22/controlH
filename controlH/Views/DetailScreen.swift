@@ -35,7 +35,7 @@ struct DetailScreen: View {
                         
                         // Tarjetas de Métricas (Dashboard Cards)
                         HStack(spacing: 16) {
-                            let esActivo = horaData?.hora_apagado == nil
+                            let esActivo = horaData?.horaApagado == nil
                             DashboardCard(
                                 label: "Estado",
                                 value: esActivo ? "Activo" : "Finalizado",
@@ -44,7 +44,7 @@ struct DetailScreen: View {
                             
                             DashboardCard(
                                 label: "Inactividad",
-                                value: "\(horaData?.minutosInactivo ?? 0} min", 
+                                value: "\(horaData?.minutosInactivo ?? 0) min",
                                 color: Color.orange
                             )
                         }
