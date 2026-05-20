@@ -9,7 +9,6 @@ import SwiftUI
 
 struct SwitchWithLabel: View {
     let title: String
-    let initialSwitchState: Bool
     let isLoading: Bool
     let isEnabled: Bool
     
