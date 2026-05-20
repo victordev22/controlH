@@ -7,13 +7,6 @@
 
 import SwiftUI
 
-// Estructura de modelo equivalente a tus Data Classes MenuItemData / MenuItemDataList
-struct MenuItemData: Identifiable {
-    let id = UUID()
-    let text: String
-    let iconName: String // Nombre del símbolo del sistema de Apple (SF Symbols)
-}
-
 // MARK: - PRIMER COMPONENTE: DropdownMenuList
 struct DropdownMenuList: View {
     let menuItems = [
