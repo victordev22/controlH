@@ -8,53 +8,38 @@
 import SwiftUI
 
 struct AuthScreen: View {
-    // Conexión al enrutador de navegación global
     @Environment(NavigationRouter.self) var router
-    
-    // Asumimos que tienes tu equivalente al AuthViewModel de Android
-    // @StateObject var viewModel = AuthViewModel()
-    
-    // Estados temporales de simulación (Sustituye a tus collectAsState de Compose)
-    @State private var email = ""
-    @State private var password = ""
-    @State private var nickname = ""
-    @State private var isLoginScreen = true
+    @Environment(AuthViewModel.self)   var authViewModel
+
     @State private var passwordVisible = false
-    @State private var isLoading = false
-    @State private var errorMessage: String? = nil
-    @State private var successMessage: String? = nil
-    @State private var isAuthenticated = false
 
     var body: some View {
+        @Bindable var vm = authViewModel
+
         ZStyleContainer {
             VStack(spacing: 16) {
-                // Título principal
-                Text(isLoginScreen ? "Sign In" : "Sign Up")
+                Text(vm.isLoginScreen ? "Sign In" : "Sign Up")
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .foregroundColor(AppTheme.primary)
                     .padding(.bottom, 24)
-                
-                // Campo Email
-                TextField("Email", text: $email)
+
+                TextField("Email", text: $vm.email)
                     .textFieldStyle(OutlinedTextFieldStyle())
                     .autocapitalization(.none)
                     .keyboardType(.emailAddress)
-                
-                // Campo Nickname (Condicional)
-                if !isLoginScreen {
-                    TextField("Nickname", text: $nickname)
+
+                if !vm.isLoginScreen {
+                    TextField("Nickname", text: $vm.nickname)
                         .textFieldStyle(OutlinedTextFieldStyle())
                 }
-                
-                // Campo Password con alternancia de visibilidad (Trailing Icon nativo)
+
                 HStack {
                     if passwordVisible {
-                        TextField("Password", text: $password)
+                        TextField("Password", text: $vm.password)
                     } else {
-                        SecureField("Password", text: $password)
+                        SecureField("Password", text: $vm.password)
                     }
-                    
                     Button(action: { passwordVisible.toggle() }) {
                         Image(systemName: passwordVisible ? "eye.fill" : "eye.slash.fill")
                             .foregroundColor(.gray)
@@ -62,20 +47,25 @@ struct AuthScreen: View {
                 }
                 .padding()
                 .background(RoundedRectangle(cornerRadius: 8).stroke(Color.gray, lineWidth: 1))
-                
+
                 Spacer().frame(height: 16)
-                
-                // Botón de Acción o Indicador de Carga
-                if isLoading {
+
+                if vm.isLoading {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle(tint: AppTheme.primary))
                         .scaleEffect(1.5)
                         .frame(height: 48)
                 } else {
                     Button(action: {
-                        ejecutarAuth()
+                        Task {
+                            if authViewModel.isLoginScreen {
+                                await authViewModel.signIn()
+                            } else {
+                                await authViewModel.signUp()
+                            }
+                        }
                     }) {
-                        Text(isLoginScreen ? "Sign In" : "Sign Up")
+                        Text(vm.isLoginScreen ? "Sign In" : "Sign Up")
                             .font(.headline)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
@@ -84,55 +74,37 @@ struct AuthScreen: View {
                             .cornerRadius(8)
                     }
                 }
-                
-                // Botón de alternancia de pantalla
-                Button(action: { isLoginScreen.toggle() }) {
-                    Text(isLoginScreen ? "Don't have an account? Sign Up" : "Already have an account? Sign In")
+
+                Button(action: { authViewModel.toggleAuthScreen() }) {
+                    Text(vm.isLoginScreen
+                         ? "Don't have an account? Sign Up"
+                         : "Already have an account? Sign In")
                         .font(.subheadline)
                         .foregroundColor(AppTheme.secondary)
                 }
                 .padding(.top, 16)
-                
-                // Mensajes de Feedback
-                if let error = errorMessage {
-                    Text(error)
-                        .foregroundColor(.red)
-                        .font(.callout)
-                        .padding(.top, 16)
+
+                if let error = vm.errorMessage {
+                    Text(error).foregroundColor(.red).font(.callout).padding(.top, 8)
                 }
-                
-                if let success = successMessage {
-                    Text(success)
-                        .foregroundColor(.green)
-                        .font(.callout)
-                        .padding(.top, 16)
+                if let success = vm.successMessage {
+                    Text(success).foregroundColor(.green).font(.callout).padding(.top, 8)
                 }
             }
             .padding(16)
         }
         .navigationTitle("Authentication")
         .navigationBarTitleDisplayMode(.inline)
-        // Equivalente al LaunchedEffect(isAuthenticated) de Compose
-        .onChange(of: isAuthenticated) { oldValue, newValue in
+        .onChange(of: authViewModel.isAuthenticated) { _, newValue in
             if newValue {
-                // Navegamos a home y limpiamos el stack de login
-                router.popToRoot()
-                router.navigate(to: .home)
+                router.pushAndReplaceRoot(with: .home)
             }
-        }
-    }
-    
-    private func ejecutarAuth() {
-        isLoading = true
-        // Aquí llamas a tu ApiService y modificas 'isAuthenticated' tras la respuesta exitosa
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            isLoading = false
-            isAuthenticated = true
         }
     }
 }
 
-// Helper para emular la estética OutlinedTextField de Material Design 3
+// MARK: - Helpers de estilo
+
 struct OutlinedTextFieldStyle: TextFieldStyle {
     func _body(configuration: TextField<Self._Label>) -> some View {
         configuration
@@ -141,7 +113,6 @@ struct OutlinedTextFieldStyle: TextFieldStyle {
     }
 }
 
-// Un contenedor genérico para heredar estructuras visuales limpias
 struct ZStyleContainer<Content: View>: View {
     var content: () -> Content
     var body: some View {

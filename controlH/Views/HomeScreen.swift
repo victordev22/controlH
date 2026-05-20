@@ -64,23 +64,15 @@ struct HomeScreen: View {
             .tag(0)
             
             // --- PESTAÑA 2: LISTADO DE HORAS ---
-            NavigationStack {
-                // Aquí meteremos tu ListScreen más adelante
-                Text("Listado de Horas General")
-                    .navigationTitle("Horas")
-            }
+            ListScreen()
             .tabItem {
                 Label("Horas", systemImage: "list.bullet")
             }
             .tag(1)
-            
-            // --- PESTAÑA 3: ADMIN LIST (SOLO SI ES ADMIN) ---
+
+            // --- PESTAÑA 3: ADMIN (SOLO SI ES ADMIN) ---
             if isAdmin {
-                NavigationStack {
-                    // Aquí meteremos tu ListUser más adelante
-                    Text("Administración de Usuarios")
-                        .navigationTitle("Usuarios")
-                }
+                ListUser()
                 .tabItem {
                     Label("Usuarios", systemImage: "person.fill")
                 }
@@ -114,8 +106,8 @@ struct HomeBodyContent: View {
             
             // Fila con los dos arcos gráficos (UsageLimitProgress)
             HStack(spacing: 24) {
-                UsageLimitProgress(usedMinutes: elapsedDailyMinutes, maxMinutes: DAILY_MAX_MINUTES, label: "Diario", canvasSize: 140)
-                UsageLimitProgress(usedMinutes: totalWeeklyMinutes, maxMinutes: WEEKLY_MAX_MINUTES, label: "Semanal", canvasSize: 140)
+                UsageLimitProgress(usedMinutes: elapsedDailyMinutes, maxMinutes: Constants.dailyMaxMinutes, label: "Diario", canvasSize: 140)
+                UsageLimitProgress(usedMinutes: totalWeeklyMinutes, maxMinutes: Constants.weeklyMaxMinutes, label: "Semanal", canvasSize: 140)
             }
             
             Spacer()
@@ -141,8 +133,8 @@ struct AdminBodyContent: View {
                 .padding(.top, 24)
             
             HStack(spacing: 24) {
-                UsageLimitProgress(usedMinutes: elapsedDailyMinutes, maxMinutes: DAILY_MAX_MINUTES, label: "Diario", canvasSize: 140)
-                UsageLimitProgress(usedMinutes: totalWeeklyMinutes, maxMinutes: WEEKLY_MAX_MINUTES, label: "Semanal", canvasSize: 140)
+                UsageLimitProgress(usedMinutes: elapsedDailyMinutes, maxMinutes: Constants.dailyMaxMinutes, label: "Diario", canvasSize: 140)
+                UsageLimitProgress(usedMinutes: totalWeeklyMinutes, maxMinutes: Constants.weeklyMaxMinutes, label: "Semanal", canvasSize: 140)
             }
             
             Spacer()

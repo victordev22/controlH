@@ -64,7 +64,7 @@ struct ControlHApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AppRouterView()
                 .environment(AppState.shared)
         }
     }

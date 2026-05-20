@@ -5,104 +5,93 @@
 //  Created by user297436 on 5/20/26.
 //
 
-import Foundation
-import Combine
+import SwiftUI
 
 @MainActor
-class AuthViewModel: ObservableObject {
-    // Campos del Formulario reactivos
-    @Published var email = ""
-    @Published var password = ""
-    @Published var nickname = ""
-    
-    // Estados Globales
-    @Published var isLoading = false
-    @Published var errorMessage: String? = nil
-    @Published var successMessage: String? = nil
-    @Published var isLoginScreen = true
-    @Published var isAuthenticated = false
-    @Published var currentUser: User? = nil
-    @Published var userData: UserFull? = nil
-    
+@Observable
+class AuthViewModel {
+
+    var email        = ""
+    var password     = ""
+    var nickname     = ""
+    var isLoading    = false
+    var errorMessage:   String? = nil
+    var successMessage: String? = nil
+    var isLoginScreen   = true
+    var isAuthenticated = false
+    var currentUser:  User?     = nil
+    var userData:     UserFull? = nil
+
     init() {
-        self.isAuthenticated = TokenManager.getToken() != nil
-        print("AuthViewModel initialized. isAuthenticated: \(isAuthenticated)")
-        
+        isAuthenticated = TokenManager.getToken() != nil
         if isAuthenticated {
             Task { await fetchCurrentUser() }
         }
     }
-    
+
     func toggleAuthScreen() {
         isLoginScreen.toggle()
-        errorMessage = nil
+        errorMessage   = nil
         successMessage = nil
-        email = ""
+        email    = ""
         password = ""
         nickname = ""
     }
-    
-    func signIn() {
-        isLoading = true
+
+    func signIn() async {
+        isLoading    = true
         errorMessage = nil
-        successMessage = nil
-        
-        Task {
-            // Lógica estructurada de llamada a API usando async/await (Mapeo de RetrofitClient)
-            do {
-                // Aquí irían tus llamadas reales de red, simulamos éxito para flujo gráfico:
-                try await Task.sleep(nanoseconds: 1_000_000_000)
-                
-                let simulatedToken = "JWT_TOKEN_SAMPLE"
-                TokenManager.saveToken(token: simulatedToken)
-                self.isAuthenticated = true
-                self.successMessage = "\(email) signed in successfully!"
-                
-                await fetchCurrentUser()
-            } catch {
-                self.errorMessage = "Network error: \(error.localizedDescription)"
-            }
-            isLoading = false
-        }
-    }
-    
-    func signUp() {
-        isLoading = true
-        errorMessage = nil
-        successMessage = nil
-        
-        Task {
-            // Lógica asíncrona de registro...
-            isLoading = false
-        }
-    }
-    
-    func fetchCurrentUser() async {
-        isLoading = true
-        // Simulando llamada del perfil
+
         do {
-            // Al recuperar el usuario, enlazamos el APNS/FCM Token nativo de iOS como tu código de NovuManager:
-            /*
-            Messaging.messaging().token { token, error in
-                if let token = token {
-                     NovuManager.vincularDispositivo(email: self.email, token: token)
-                }
-            }
-            */
-            print("Successfully fetched user profile details")
+            let jwtResponse = try await ApiService.shared.login(
+                requestData: LoginRequest(email: email, password: password)
+            )
+            TokenManager.saveToken(token: jwtResponse.token)
+            isAuthenticated = true
+            successMessage  = "\(email) sesión iniciada correctamente"
+            await fetchCurrentUser()
+        } catch {
+            errorMessage = "Error al iniciar sesión: \(error.localizedDescription)"
         }
         isLoading = false
     }
-    
+
+    func signUp() async {
+        isLoading    = true
+        errorMessage = nil
+
+        do {
+            let signupRequest = SignupRequest(nickname: nickname, email: email, password: password)
+            _ = try await ApiService.shared.signup(requestData: signupRequest)
+            successMessage = "Cuenta creada. Por favor inicia sesión."
+            isLoginScreen  = true
+        } catch {
+            errorMessage = "Error al registrarse: \(error.localizedDescription)"
+        }
+        isLoading = false
+    }
+
+    func fetchCurrentUser() async {
+        do {
+            let user = try await ApiService.shared.getCurrentUser()
+            currentUser = user
+            AppState.shared.updateCurrentUser(user)
+            userData = try await ApiService.shared.getRawCurrentUserJson()
+        } catch {
+            print("AuthViewModel: error al cargar usuario - \(error.localizedDescription)")
+        }
+    }
+
     func logout() {
         TokenManager.clearToken()
+        ApiService.shared.jwtToken = nil
         isAuthenticated = false
-        successMessage = "You have been logged out."
-        currentUser = nil
-        userData = nil
-        email = ""
+        currentUser     = nil
+        userData        = nil
+        email    = ""
         password = ""
         nickname = ""
         isLoginScreen = true
+        AppState.shared.currentUser = nil
     }
 }
