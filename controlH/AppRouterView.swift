@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AppRouterView: View {
-    @StateObject private var router = NavigationRouter()
+    @State private var router = NavigationRouter()
 
     var body: some View {
         NavigationStack(path: $router.path) {
@@ -49,6 +49,6 @@ struct AppRouterView: View {
             }
         }
         // Inyectamos el router en toda la app para poder navegar desde cualquier pantalla secundaria
-        .environmentObject(router)
+        .environment(router)
     }
 }

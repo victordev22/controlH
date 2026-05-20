@@ -9,7 +9,7 @@ import SwiftUI
 
 struct DetailScreen: View {
     let id: Int
-    @EnvironmentObject var router: NavigationRouter
+    @Environment(NavigationRouter.self) var router
     
     @State private var horaData: Horas? = nil
     @State private var isLoading = true

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SplashScreen: View {
-    @EnvironmentObject var router: NavigationRouter
+    @Environment(NavigationRouter.self) var router
     // @EnvironmentObject var authViewModel: AuthViewModel
 
     // Estado de sesión simulado para pruebas de compilación de interfaz
@@ -54,6 +54,6 @@ struct BoxContainerView<Content: View>: View {
 struct SplashScreen_Previews: PreviewProvider {
     static var previews: some View {
         SplashScreen()
-            .environmentObject(NavigationRouter())
+            .environment(NavigationRouter())
     }
 }

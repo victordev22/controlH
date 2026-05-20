@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AuthScreen: View {
     // Conexión al enrutador de navegación global
-    @EnvironmentObject var router: NavigationRouter
+    @Environment(NavigationRouter.self) var router
     
     // Asumimos que tienes tu equivalente al AuthViewModel de Android
     // @StateObject var viewModel = AuthViewModel()

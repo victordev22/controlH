@@ -6,9 +6,9 @@
 //
 import SwiftUI
 
-class NavigationRouter: ObservableObject {
-    // Esta lista guarda el historial de pantallas abiertas
-    @Published var path: [AppScreen] = []
+@Observable
+class NavigationRouter {
+    var path: [AppScreen] = []
 
     // Funciones rápidas para navegar
     func navigate(to screen: AppScreen) {

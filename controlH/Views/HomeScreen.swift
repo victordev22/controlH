@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HomeScreen: View {
-    @EnvironmentObject var router: NavigationRouter
+    @Environment(NavigationRouter.self) var router
     // @StateObject var homeViewModel = HomeViewModel() // Instancia de tu lógica
     // @EnvironmentObject var authViewModel: AuthViewModel
     
@@ -189,6 +189,6 @@ struct PowerOnOfPlaceholder: View {
 struct HomeScreen_Previews: PreviewProvider {
     static var previews: some View {
         HomeScreen()
-            .environmentObject(NavigationRouter())
+            .environment(NavigationRouter())
     }
 }
