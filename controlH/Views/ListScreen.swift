@@ -165,28 +165,17 @@ struct ListScreen: View {
         }
     }
 
-    // Lógica de Red (Simulación de llamadas de API Retrofit)
     private func fetchHorasData() async {
         isLoading = true
         errorMessage = nil
         do {
-            // Aquí llamarías a tu capa de servicio de red real en Swift:
-            // let response = try await NetworkClient.shared.getHoras()
-            try await Task.sleep(nanoseconds: 1_000_000_000) // Mock retraso 1s
-            
-            // Datos quemados de prueba estructurados idénticos a tu backend
-            let mockData = [
-                Horas(id: 1, user: "PC_ALBERTO", horaEncendido: Date().addingTimeInterval(-36000), horaApagado: Date(), minutosInactivo: 12, listaApps: nil),
-                Horas(id: 2, user: "PC_MARIA", horaEncendido: Date().addingTimeInterval(-14000), horaApagado: nil, minutosInactivo: 0, listaApps: nil),
-                Horas(id: 3, user: "PC_CARLOS", horaEncendido: Date(), horaApagado: nil, minutosInactivo: 45, listaApps: nil)
-            ]
-            
-            horasList = mockData
-            uniqueUsers = Array(Set(mockData.map { $0.user })).sorted()
-            isLoading = false
+            let data = try await ApiService.shared.getHoras()
+            horasList   = data
+            uniqueUsers = Array(Set(data.map { $0.user })).sorted()
+            isLoading   = false
         } catch {
             errorMessage = "Error de red: \(error.localizedDescription)"
-            isLoading = false
+            isLoading    = false
         }
     }
 }
