@@ -53,7 +53,7 @@ class NotificationWorker {
             print("NotificationWorker: isPcOn=\(isPcOn) para usuario=\(user.nickname)")
 
             // 3. Si está encendido y fuera del horario configurado → notificar y recheck en 15 min
-            if isPcOn && isOutsideScheduledHours(offControl: user.ofControl) {
+            if isPcOn, let offControl = user.ofControl, isOutsideScheduledHours(offControl: offControl) {
                 triggerLocalNotification(nickname: user.nickname)
                 scheduleNextCheck(delayInSeconds: 15 * 60)
             }
