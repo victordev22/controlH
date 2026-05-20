@@ -15,7 +15,7 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     
     // Solicitar permisos al usuario (Sustituye la configuración manual del canal de Android)
     func requestPermissions() {
-        UNUserNotificationCenter.current().requestPermission(options: [.alert, .badge, .sound]) { granted, error in
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
             if granted {
                 print("Permisos de notificaciones concedidos.")
                 // Registrar para notificaciones remotas en el hilo principal
