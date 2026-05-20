@@ -32,13 +32,11 @@ class ControlViewModel {
     }
     
     func togglePower() {
-        // viewModelScope.launch se traduce en crear un bloque asíncrono asilado 'Task'
         Task {
             uiState.isConnecting = true
             uiState.errorMessage = nil
-            
-            // Reemplaza de forma segura la variable 'UserPC' que tenías global
-            let userPCName = "UserPC_Placeholder"
+
+            let userPCName = AppState.shared.currentUser?.nickname ?? ""
             let command = uiState.isPoweredOn ? "sh \(userPCName)_off.sh" : "sh \(userPCName).sh"
             
             let result = await controlRepository.connectToSsh(command: command)
@@ -56,8 +54,14 @@ class ControlViewModel {
     
     private func fetchInitialPowerState() async {
         uiState.isConnecting = true
-        let currentUser = AppState.shared.currentUser
-        
+        let currentUser: User?
+        if let cached = AppState.shared.currentUser {
+            currentUser = cached
+        } else {
+            currentUser = try? await ApiService.shared.getCurrentUser()
+            if let user = currentUser { AppState.shared.updateCurrentUser(user) }
+        }
+
         let result = await controlRepository.listaHoras()
         
         switch result {
