@@ -28,7 +28,7 @@ struct SwitchWithLabel: View {
     var body: some View {
         HStack {
             Text(title)
-                .foregroundColor(isEnabled ? .white : .lightGray)
+                .foregroundColor(isEnabled ? .white : .gray.opacity(0.5))
             
             Spacer()
             
