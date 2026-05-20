@@ -114,9 +114,40 @@ class ApiService {
     func getHoras() async throws -> [Horas] {
         let request = makeRequest(baseURL: Constants.baseURL, path: Constants.pathHoras, method: "GET")
         let (data, _) = try await URLSession.shared.data(for: request)
+        return try ApiService.springBootDecoder.decode([Horas].self, from: data)
+    }
+
+    // Decoder robusto para fechas de Spring Boot: soporta ISO8601 con/sin ms, con/sin timezone
+    static var springBootDecoder: JSONDecoder {
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        return try decoder.decode([Horas].self, from: data)
+        let isoFull   = ISO8601DateFormatter()
+        isoFull.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        let isoBasic  = ISO8601DateFormatter()
+        isoBasic.formatOptions = [.withInternetDateTime]
+        let noTzMs = makeDateFormatter("yyyy-MM-dd'T'HH:mm:ss.SSS")
+        let noTz   = makeDateFormatter("yyyy-MM-dd'T'HH:mm:ss")
+        let spaced = makeDateFormatter("yyyy-MM-dd HH:mm:ss")
+
+        decoder.dateDecodingStrategy = .custom { dec in
+            let c = try dec.singleValueContainer()
+            let s = try c.decode(String.self)
+            if let d = isoFull.date(from: s)  { return d }
+            if let d = isoBasic.date(from: s)  { return d }
+            if let d = noTzMs.date(from: s)    { return d }
+            if let d = noTz.date(from: s)      { return d }
+            if let d = spaced.date(from: s)    { return d }
+            throw DecodingError.dataCorrupted(
+                .init(codingPath: dec.codingPath, debugDescription: "Formato de fecha no reconocido: \(s)")
+            )
+        }
+        return decoder
+    }
+
+    private static func makeDateFormatter(_ format: String) -> DateFormatter {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.dateFormat = format
+        return f
     }
 
     func getHoraById(id: Int) async throws -> Horas {

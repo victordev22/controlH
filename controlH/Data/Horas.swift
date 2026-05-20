@@ -17,7 +17,7 @@ struct Horas: Codable, Identifiable {
 
     enum CodingKeys: String, CodingKey {
         case id, user, minutosInactivo, listaApps
-        case horaEncendido = "horaencendido"
-        case horaApagado = "horaapagado"
+        case horaEncendido = "horaEncendido"
+        case horaApagado   = "horaApagado"
     }
 }

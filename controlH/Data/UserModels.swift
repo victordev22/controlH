@@ -36,8 +36,8 @@ struct UserFull: Codable, Identifiable {
     var nickname: String
     var email: String
     let password: String?
-    let onControl: String
-    let ofControl: String
+    let onControl: String?
+    let ofControl: String?
     var roles: [Role]
 
     enum CodingKeys: String, CodingKey {

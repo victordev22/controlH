@@ -26,8 +26,8 @@ struct EditUserView: View {
         self.onConfirm = onConfirm
         _nickname = State(initialValue: user.nickname)
         _email    = State(initialValue: user.email)
-        _onTime   = State(initialValue: user.onControl)
-        _offTime  = State(initialValue: user.ofControl)
+        _onTime   = State(initialValue: user.onControl ?? "")
+        _offTime  = State(initialValue: user.ofControl ?? "")
         
         let isAdmin = user.roles.contains { $0.erole == "ROLE_ADMIN" }
         _selectedRoleId = State(initialValue: isAdmin ? 2 : 1)
@@ -69,8 +69,8 @@ struct EditUserView: View {
                             nickname: nickname,
                             email: email,
                             password: user.password,
-                            onControl: onTime,
-                            ofControl: offTime,
+                            onControl: onTime.isEmpty ? nil : onTime,
+                            ofControl: offTime.isEmpty ? nil : offTime,
                             roles: user.roles
                         )
                         onConfirm(updatedUser, selectedRoleId)

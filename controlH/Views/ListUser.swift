@@ -144,7 +144,7 @@ struct CardItemUserView: View {
                 Text("Rol: \(user.roles.contains { $0.erole == "ROLE_ADMIN" } ? "ADMIN" : "USER")")
                     .font(.caption)
                     .bold()
-                Text("ON: \(user.onControl) | OFF: \(user.ofControl)")
+                Text("ON: \(user.onControl ?? "N/A") | OFF: \(user.ofControl ?? "N/A")")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
