@@ -54,7 +54,7 @@ class AuthViewModel: ObservableObject {
                 try await Task.sleep(nanoseconds: 1_000_000_000)
                 
                 let simulatedToken = "JWT_TOKEN_SAMPLE"
-                TokenManager.saveToken(simulatedToken)
+                TokenManager.saveToken(token: simulatedToken)
                 self.isAuthenticated = true
                 self.successMessage = "\(email) signed in successfully!"
                 
