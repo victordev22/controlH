@@ -95,11 +95,6 @@ struct AuthScreen: View {
         }
         .navigationTitle("Authentication")
         .navigationBarTitleDisplayMode(.inline)
-        .onChange(of: authViewModel.isAuthenticated) { _, newValue in
-            if newValue {
-                router.pushAndReplaceRoot(with: .home)
-            }
-        }
     }
 }
 

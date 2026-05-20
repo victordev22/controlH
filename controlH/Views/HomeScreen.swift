@@ -9,8 +9,7 @@ import SwiftUI
 
 struct HomeScreen: View {
     @Environment(NavigationRouter.self) var router
-    // @StateObject var homeViewModel = HomeViewModel() // Instancia de tu lógica
-    // @EnvironmentObject var authViewModel: AuthViewModel
+    @Environment(AuthViewModel.self)   var authViewModel
     
     // Estados simulados para que compile de inmediato (Equivalente a collectAsState)
     @State private var nickname: String = "UserAdmin_PC"
@@ -49,8 +48,7 @@ struct HomeScreen: View {
                     // Botón de salir ubicado arriba a la derecha en la barra nativa (TopAppBar)
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button(action: {
-                            // authViewModel.logout()
-                            router.popToRoot()
+                            authViewModel.logout()
                         }) {
                             Image(systemName: "rectangle.portrait.and.arrow.right")
                                 .foregroundColor(.red)
