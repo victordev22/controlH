@@ -11,12 +11,13 @@ import SwiftUI
 import UserNotifications
 
 // Estado global de la app equivalente al companion object de MyApp
-class AppState: ObservableObject {
+@Observable
+class AppState {
     static let shared = AppState()
-    @Published var currentUser: User? = nil
-    
+    var currentUser: User? = nil
+
     private init() {}
-    
+
     func updateCurrentUser(_ user: User) {
         self.currentUser = user
     }
@@ -26,7 +27,7 @@ class AppState: ObservableObject {
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         
-        TokenManager.shared.initManager()
+        TokenManager.initManager()
         registerForRemoteNotifications()
         return true
     }
@@ -39,7 +40,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             if granted {
                 print("Permiso de notificaciones concedido.")
-                DispatchQueue.main.onMainActor {
+                DispatchQueue.main.async {
                     UIApplication.shared.registerForRemoteNotifications()
                 }
             } else {
@@ -64,7 +65,7 @@ struct ControlHApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(AppState.shared)
+                .environment(AppState.shared)
         }
     }
 }

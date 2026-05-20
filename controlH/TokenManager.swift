@@ -13,7 +13,7 @@ class TokenManager {
 
     // En iOS no hace falta inicializar un Context como en Android.
     // El Keychain está disponible globalmente en el sistema operativo.
-    func initManager() {
+    static func initManager() {
         print("TokenManager: Sistema de llavero seguro iOS listo.")
     }
 

@@ -7,12 +7,6 @@
 
 import SwiftUI
 
-// Estado de UI equivalente al UIState del recolector en Compose
-struct PowerUiState {
-    var isPoweredOn: Bool = false
-    var isConnecting: Bool = false
-}
-
 struct PowerOnOf: View {
     // Simulación del estado del ViewModel
     @State private var uiState = PowerUiState()

@@ -5,8 +5,7 @@
 //  Created by user297436 on 5/20/26.
 //
 
-import Foundation
-import Combine
+import SwiftUI
 
 // Estructura idéntica a tu data class PowerUiState de Kotlin
 struct PowerUiState {
@@ -16,10 +15,10 @@ struct PowerUiState {
 }
 
 @MainActor
-class ControlViewModel: ObservableObject {
-    
-    // @Published emite cambios instantáneos mapeando el comportamiento del StateFlow en Android
-    @Published private(set) var uiState = PowerUiState()
+@Observable
+class ControlViewModel {
+
+    private(set) var uiState = PowerUiState()
     
     private let controlRepository: ControlRepository
     
@@ -57,7 +56,7 @@ class ControlViewModel: ObservableObject {
     
     private func fetchInitialPowerState() async {
         uiState.isConnecting = true
-        let currentUser = MyApp.getSafeCurrentUser()
+        let currentUser = AppState.shared.currentUser
         
         let result = await controlRepository.listaHoras()
         
@@ -65,7 +64,7 @@ class ControlViewModel: ObservableObject {
         case .success(let horasList):
             // Equivale al predicado .any { it.hora_apagado == nil && it.user == nickname }
             let isPCFound = horasList.contains { hora in
-                hora.hora_apagado == nil && hora.user == currentUser?.nickname
+                hora.horaApagado == nil && hora.user == currentUser?.nickname
             }
             
             print("ControlViewModel: PC Status Check: isPCFound=\(isPCFound) for user=\(currentUser?.nickname ?? "")")
