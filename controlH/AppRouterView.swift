@@ -15,7 +15,7 @@ struct AppRouterView: View {
     var body: some View {
         Group {
             if isLaunching {
-                // Splash puro: sin NavigationStack, solo dura 3 segundos
+                // Splash sin NavigationStack propio
                 BoxContainerView {
                     Text("Welcome")
                         .font(.system(size: 30, weight: .bold))
@@ -24,32 +24,21 @@ struct AppRouterView: View {
                     try? await Task.sleep(nanoseconds: 3_000_000_000)
                     isLaunching = false
                 }
+            } else if authViewModel.isAuthenticated {
+                // HomeScreen gestiona su propia navegación via TabView + NavigationStack por tab.
+                // NO se envuelve aquí en otro NavigationStack para evitar nesting de barras.
+                HomeScreen()
             } else {
-                // El estado de autenticación decide la raíz: no hay riesgo de volver a Splash
-                NavigationStack(path: $router.path) {
-                    Group {
-                        if authViewModel.isAuthenticated {
-                            HomeScreen()
-                        } else {
-                            AuthScreen()
-                        }
-                    }
-                    .navigationDestination(for: AppScreen.self) { screen in
-                        switch screen {
-                        case .list:           ListScreen()
-                        case .listU:          ListUser()
-                        case .detail(let id): DetailScreen(id: id)
-                        default:              EmptyView()
-                        }
-                    }
-                }
-                // Al cerrar sesión limpia el path antes de mostrar AuthScreen
-                .onChange(of: authViewModel.isAuthenticated) { _, isAuth in
-                    if !isAuth { router.popToRoot() }
+                // Solo la pantalla de auth necesita su propio NavigationStack
+                NavigationStack {
+                    AuthScreen()
                 }
             }
         }
         .environment(router)
         .environment(authViewModel)
+        .onChange(of: authViewModel.isAuthenticated) { _, isAuth in
+            if !isAuth { router.popToRoot() }
+        }
     }
 }
