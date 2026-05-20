@@ -74,7 +74,7 @@ struct ListUser: View {
                 Text("¿Estás seguro de que quieres eliminar a \(user.nickname)? Esta acción no se puede deshacer.")
             }
             // --- MODAL DE EDICIÓN DE DETALLES DEL USUARIO ---
-            .sheet(isPresented: $showEditDialog, item: $selectedUser) { user in
+            .sheet(item: $selectedUser) { user in
                 EditUserDialogView(user: user) { updatedUser, roleId in
                     updateUserAction(user: updatedUser, roleId: roleId)
                 }
