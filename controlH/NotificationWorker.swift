@@ -7,6 +7,7 @@
 
 import Foundation
 import BackgroundTasks
+import UserNotifications
 
 class NotificationWorker {
     static let taskIdentifier = "com.controlh.dailycheck"
