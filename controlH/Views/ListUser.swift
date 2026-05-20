@@ -85,28 +85,44 @@ struct ListUser: View {
     private func refreshData() {
         isLoading = true
         errorMessage = nil
-        // Mock de carga asíncrona de usuarios
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-            self.userList = [
-                UserFull(id: 1, nickname: "Admin01", email: "admin@control.com", password: nil, onControl: "08:00", ofControl: "17:00", roles: [Role(erole: "ROLE_ADMIN")]),
-                UserFull(id: 2, nickname: "UserDev", email: "dev@control.com", password: nil, onControl: "09:00", ofControl: "18:00", roles: [Role(erole: "ROLE_USER")])
-            ]
-            self.isLoading = false
+        Task {
+            do {
+                userList  = try await ApiService.shared.getAllUsersFull()
+                isLoading = false
+            } catch {
+                errorMessage = "Error al cargar usuarios: \(error.localizedDescription)"
+                isLoading    = false
+            }
         }
     }
 
     private func deleteUserAction(id: Int) {
-        // Ejecución simulada del borrado contra la API del servidor
-        userList.removeAll { $0.id == id }
-        print("Usuario \(id) eliminado con éxito.")
+        Task {
+            do {
+                try await ApiService.shared.deleteUser(id: Int64(id))
+                userList.removeAll { $0.id == id }
+            } catch {
+                errorMessage = "Error al eliminar: \(error.localizedDescription)"
+            }
+        }
     }
 
     private func updateUserAction(user: UserFull, roleId: Int) {
-        // Encontrar índice y actualizar los datos locales reflejando los cambios de red con éxito
-        if let index = userList.firstIndex(where: { $0.id == user.id }) {
-            var updated = user
-            updated.roles = [Role(erole: roleId == 1 ? "ROLE_ADMIN" : "ROLE_USER")]
-            userList[index] = updated
+        Task {
+            do {
+                let roleErole = roleId == 1 ? "ROLE_ADMIN" : "ROLE_USER"
+                _ = try await ApiService.shared.updateUserRole(
+                    email: user.email,
+                    roleRequest: RoleUpdateRequest(newRoleId: roleId)
+                )
+                if let index = userList.firstIndex(where: { $0.id == user.id }) {
+                    var updated = user
+                    updated.roles = [Role(erole: roleErole)]
+                    userList[index] = updated
+                }
+            } catch {
+                errorMessage = "Error al actualizar: \(error.localizedDescription)"
+            }
         }
     }
 }
